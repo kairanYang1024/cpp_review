@@ -29,3 +29,6 @@ int main() {
 }
 
 // g++ on multiple files including Cube.h: have to specify all source file OR specify the routine in the Make file
+// each cpp file is compiled to .o file (specify by g++ -c filename.cpp)
+// and the .o files will be linked as an executable .exe OR .out (a.out by default invoked by g++)
+// so main.cpp does not need to include "Cube.cpp" but only "Cube.h" since both are in one object file
