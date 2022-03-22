@@ -18,12 +18,14 @@
 
 namespace uiuc {
   void PNG::_copy(PNG const & other) {
-    // Clear self
+    // Clear self: cleaning data if already written, no effect if data=NULL
     delete[] imageData_;
 
     // Copy `other` to self
     width_ = other.width_;
     height_ = other.height_;
+
+    //init and copy
     imageData_ = new HSLAPixel[width_ * height_];
     for (unsigned i = 0; i < width_ * height_; i++) {
       imageData_[i] = other.imageData_[i];
@@ -60,6 +62,7 @@ namespace uiuc {
     if (width_ != other.width_) { return false; }
     if (height_ != other.height_) { return false; }
 
+    //pixel-wise checking equality
     for (unsigned i = 0; i < width_ * height_; i++) {
       HSLAPixel & p1 = imageData_[i];
       HSLAPixel & p2 = other.imageData_[i];

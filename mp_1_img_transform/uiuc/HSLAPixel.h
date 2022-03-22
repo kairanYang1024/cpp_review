@@ -15,7 +15,16 @@ namespace uiuc {
   // Put your HSLAPixel class definition here.
   // (Remember to end it with a semicolon!)
   class HSLAPixel {
-
+    public:
+      //ctors:
+      HSLAPixel();
+      HSLAPixel(double hue, double sat, double lumi);
+      HSLAPixel(double hue, double sat, double lumi, double alpha);
+      //member variables
+      double h; //hue: [0, 360]
+      double s; //saturation: [0, 1]
+      double l; //luminance: [0, 1]
+      double a; //alpha: [0, 1]
   };
 
 }

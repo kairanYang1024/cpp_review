@@ -11,8 +11,8 @@
 
 Write your name and email address in the comment space here:
 
-Name:
-Email:
+Name: Kevin Yang
+Email: kairany2@illinois.edu
 
 (...end multi-line comment.)
 ******************** */
@@ -67,7 +67,14 @@ PNG grayscale(PNG image) {
  * @return The image with a spotlight.
  */
 PNG createSpotlight(PNG image, int centerX, int centerY) {
-
+  //allow spotlight center out of picture bound
+  for(unsigned x = 0; x < image.width(); x++) {
+    for(unsigned y = 0; y < image.height(); y++) {
+      double dist = sqrt(((int)x - centerX)*((int)x - centerX) + ((int)y - centerY)*((int)y - centerY));
+      HSLAPixel& p = image.getPixel(x, y);
+      p.l = (dist > 160) ? p.l * 0.2 : p.l * (1 - 0.005 * dist);
+    }
+  }
   return image;
   
 }
@@ -84,7 +91,16 @@ PNG createSpotlight(PNG image, int centerX, int centerY) {
  * @return The illinify'd image.
 **/
 PNG illinify(PNG image) {
-
+  double orange = 11;
+  double blue = 216;
+  for (unsigned x = 0; x < image.width(); x++) {
+    for (unsigned y = 0; y < image.height(); y++) {
+      HSLAPixel & pixel = image.getPixel(x, y);
+      double org_dist = min(fabs(pixel.h - orange), 360 - fabs(pixel.h - orange));
+      double blu_dist = min(fabs(pixel.h - blue), 360 - fabs(pixel.h - blue));
+      pixel.h = (org_dist < blu_dist) ? orange : blue;
+    }
+  }
   return image;
 }
  
@@ -102,6 +118,15 @@ PNG illinify(PNG image) {
 * @return The watermarked image.
 */
 PNG watermark(PNG firstImage, PNG secondImage) {
-
+  unsigned width = min(firstImage.width(), secondImage.width());
+  unsigned height = min(firstImage.height(), secondImage.height());
+  for(unsigned x = 0; x < width; x++) {
+    for(unsigned y = 0; y < height; y++) {
+      if(secondImage.getPixel(x,y).l == 1.0) {
+        HSLAPixel& dest_pix = firstImage.getPixel(x, y);
+        dest_pix.l = min(dest_pix.l + 0.2, 1.0);
+      }
+    }
+  }
   return firstImage;
 }

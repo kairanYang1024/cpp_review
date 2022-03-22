@@ -12,4 +12,16 @@
 using namespace std;
 
 namespace uiuc {
+    HSLAPixel::HSLAPixel() : HSLAPixel(0, 0, 0, 0) {}
+
+    HSLAPixel::HSLAPixel(double hue, double sat, double lumi) {
+        h = hue;
+        s= sat;
+        l = lumi;
+    }
+    
+    HSLAPixel::HSLAPixel(double hue, double sat, double lumi, double alpha) : 
+    HSLAPixel(hue, sat, lumi) {
+        a = alpha;
+    }
 }
