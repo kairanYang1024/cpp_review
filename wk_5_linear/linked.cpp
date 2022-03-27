@@ -32,6 +32,17 @@ int main() {
     secondlist.popFront();
     cout << "and now they are not the same: " << mylist << " " << secondlist << " " << (mylist == secondlist) << "\n";
 
+    //arbitrary position add/removal test:
+    mylist.add(0, 7);
+    mylist.add(1, 8);
+    mylist.pop(1);
+    mylist.add(5, 2);
+    mylist.add(8, 1); //no-op
+    mylist.pop(8); //no-op
+    cout << "full list: " << mylist << "\n";
+    mylist.pop(0);
+    mylist.pop(4);
+
     //iterator implementation: allow us to do for-each loop
     //iterator points to the data like a pointer, have access operator *
     //iterator advances to the next data (& recede to the previous), have increment op ++ /decrement op --
@@ -47,6 +58,11 @@ int main() {
     for(const int& x : mylist) {
         cout << x << " ";
     }
-    cout << "\nFinished\n";
+    cout << "\n";
+    for(int i = 0; i < 10; i++) {
+        cout << "list removal: " << mylist << "\n";
+        mylist.pop(0);
+    }
+    cout << "Finished\n";
     return 0;
 }

@@ -575,15 +575,16 @@ bool LinkedList<T>::equals(const LinkedList<T>& other) const {
 // using the insertion sort algorithm that relies on insertOrdered.
 // This is not an efficient operation; insertion sort is O(n^2).
 // We're providing this for sake of comparison and study.
+// not inplace sorting, returns a copy
 template <typename T>
 LinkedList<T> LinkedList<T>::insertionSort() const {
-  // Make result list
+  // Make result list, empty
   LinkedList<T> result;
 
   // Walk along the original list and insert the items to the result in order.
   const Node* cur = head_;
   while (cur) {
-    result.insertOrdered(cur->data);
+    result.insertOrdered(cur->data); //O(n) for each insertOrdered, need to check value on each position to insert
     cur = cur->next;
   }
 
@@ -722,7 +723,7 @@ LinkedList<T> LinkedList<T>::mergeSortRecursive() const {
   }
 
   // Split this list into a list of two lists (the left and right halves)
-  LinkedList<LinkedList<T>> halves = splitHalves();
+  LinkedList<LinkedList<T>> halves = splitHalves(); //splitHalves create a copy of two half lists
 
   // Note that splitHalves usually returns two halves that are definitely
   // both smaller than the original list. The only case where it would not,

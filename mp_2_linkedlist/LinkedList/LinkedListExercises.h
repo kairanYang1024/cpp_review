@@ -127,7 +127,35 @@ void LinkedList<T>::insertOrdered(const T& newData) {
   // they don't handle the null pointer at the tail properly. Be careful
   // to update all next, prev, head_, and tail_ pointers as needed on your
   // new node or on those existing nodes that are adjacent to the new node.
-
+  Node* newnode = new Node(newData);
+  if(!head_) { //base case, no node
+    head_ = newnode;
+    tail_ = newnode;
+    size_++;
+    return;
+  }
+  Node* prev = NULL;
+  Node* curr = head_;
+  while(curr && curr->data < newData) {
+    prev = curr;
+    if(curr->next) curr = curr->next;
+    else curr = NULL;
+  }
+  if(!prev) { //adding to head
+    newnode->next = head_;
+    head_->prev = newnode;
+    head_ = newnode;
+  } else if(!curr) { //adding to tail
+    newnode->prev = tail_;
+    tail_->next = newnode;
+    tail_ = newnode;
+  } else { //adding to middle
+    newnode->prev = prev;
+    prev->next = newnode;
+    newnode->next = curr;
+    curr->prev = newnode;
+  }
+  size_++;
 }
 
 /********************************************************************
@@ -245,6 +273,25 @@ LinkedList<T> LinkedList<T>::merge(const LinkedList<T>& other) const {
   //    very slow.
 
   // -----------------------------------------------------------
+  Node* leftcurr = left.getHeadPtr();
+  Node* rightcurr = right.getHeadPtr();
+  unsigned total_size = left.size() + right.size();
+  for(unsigned i = 0; i < total_size; i++) {
+    if(leftcurr && rightcurr && leftcurr->data < rightcurr->data) {
+      merged.pushBack(leftcurr->data);
+      leftcurr = leftcurr->next;
+    } else if(leftcurr && rightcurr) {
+      merged.pushBack(rightcurr->data);
+      rightcurr = rightcurr->next;
+    } else if(leftcurr) {
+      merged.pushBack(leftcurr->data);
+      leftcurr = leftcurr -> next;
+    } else {
+      merged.pushBack(rightcurr->data);
+      rightcurr = rightcurr->next;
+    }
+  } 
+
 
   // We return the merged list by value here. It may be copied out of the
   // function, but usually the compiler will optimize this to automatically

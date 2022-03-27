@@ -58,6 +58,10 @@ class List {
         void addFront(const T& elem); //using T& to not copying the data into the argument, extra performance
         void popFront(); //no return, just data modification
 
+        //O(n) add/delete elements in the list
+        void add(unsigned index, const T& elem); //add(index, elem) means letting elem to be the index-th node of the list
+        void pop(unsigned index); //pop(index) means deleting the index'th element in the list
+
         // Two lists are equal if they have the same length and the same data items in each position.
         // This check runs in O(n) time.
         bool equals(const List<T>& other) const;

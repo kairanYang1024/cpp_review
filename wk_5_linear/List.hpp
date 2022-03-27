@@ -44,6 +44,8 @@ T& List<T>::operator[](unsigned index) { //access time linear O(n)
         curr = curr->next;
         index --;
     }
+    //default value of T is supposed to return if index out of bound, however designed to return last value in list
+    if(index > 0) cout << "Warning: index out of bound, returning last element for safety behavior.\n";
     return curr->data;
 }
 
@@ -55,8 +57,78 @@ const T& List<T>::operator[](unsigned index) const { //access time linear O(n)
         curr = curr->next;
         index --;
     }
+    //default value of T is supposed to return if index out of bound, however designed to return last value in list
+    if(index > 0) cout << "Warning: index out of bound, returning last element for safety behavior.\n";
     return curr->data;
 }
+
+template<typename T>
+void List<T>::addFront(const T& elem) { //linked list capacity is 'unlimited' unlike array having fixed size
+    ListNode* newnode = new ListNode(elem);
+    newnode->next = head_; //link old head (can be NULL) to new node
+    head_ = newnode; //reupdate head reference ptr
+}
+
+template<typename T>
+void List<T>::add(unsigned index, const T& elem) {
+    ListNode* newnode = new ListNode(elem);
+    ListNode* curr = head_; //curr points at the index of the list, if index=current length, curr can be NULL
+    ListNode* prev = NULL; //prev points to one before the index of list
+    while(index > 0 && curr) {
+        prev = curr;
+        if(curr->next) curr = curr->next;
+        else curr = NULL;
+        index--;
+    }
+    if(index > 0) {
+        cout << "Warning, index out of bound, nothing is added to the list.\n";
+        return; //no-op if index out of bound
+    }
+    if(prev) {
+        prev->next = newnode;
+        newnode->next = curr;
+    } else { //if prev=NULL, adding at head
+        newnode->next = curr;
+        head_ = newnode;
+    }
+    
+}
+
+template<typename T>
+void List<T>::popFront() {
+    if(!head_) {
+        cout << "Warning, removing from an empty list.\n";
+        return; //no-op if list is empty
+    }
+    ListNode* dead = head_;
+    head_ = head_ -> next;
+    delete dead;
+    dead = NULL;
+}
+
+template<typename T>
+void List<T>::pop(unsigned index) {
+    if(!head_) {
+        cout << "Warning, removing from an empty list.\n";
+        return; //no-op if list is empty
+    }
+    ListNode* curr = head_; //curr points at the index of the list, the node to be deleted
+    ListNode* prev = NULL; 
+    while(index > 0 && curr->next) {
+        prev = curr;
+        curr = curr->next;
+        index--;
+    }
+    if(index > 0) {
+        cout << "Warning, index out of bound, nothing is popped from the list.\n";
+        return; //no-op if index out of bound
+    }
+    if(prev) prev->next = curr->next;
+    else head_ = head_->next; //if prev still NULL: either popping the only elem or removing head, reassign head
+    delete curr;
+    curr = NULL;
+}
+
 
 template<typename T>
 bool List<T>::equals(const List<T>& other) const { //check in O(n)
@@ -81,25 +153,10 @@ bool List<T>::equals(const List<T>& other) const { //check in O(n)
     return (thisCurr == NULL) && (otherCurr == NULL);
 }
 
-template<typename T>
-void List<T>::addFront(const T& elem) { //linked list capacity is 'unlimited' unlike array having fixed size
-    ListNode* newnode = new ListNode(elem);
-    newnode->next = head_; //link old head (can be NULL) to new node
-    head_ = newnode; //reupdate head reference ptr
-}
-
-template<typename T>
-void List<T>::popFront() {
-    ListNode* dead = head_;
-    if(head_) head_ = head_ -> next;
-    delete dead;
-    dead = NULL;
-}
-
 //friend function overload operator <<, escape the problem of inner class and linker if directly declaring friend <<
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const List<T>& list) {
-  return list.print(os);
+    return list.print(os);
 }
 
 template <typename T>
