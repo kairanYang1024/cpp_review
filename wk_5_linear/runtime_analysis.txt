@@ -1,0 +1,16 @@
+Inserting element at front:
+LList: O(1) ; Array: O(1)* by amortizing expected copies
+
+Find data:
+LList: O(n); Array: O(n), to check matching, in special order (sorted): red to O(logn)
+
+Insert after: given element (Node/index), insert new elem immediately after
+LList: if not given node for access: O(n) if head ptr only, O(n/2) for shortest accessing (head & tail) 
++ O(1) creating Node
+if given node, we just create the node so O(1)
+
+Array: O(1) access + O(n) relocating data (copying the sequential data one position away)
+
+Delete after: same as insert after
+
+
