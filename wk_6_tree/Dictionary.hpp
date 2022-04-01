@@ -73,8 +73,8 @@ V Dictionary<K,V>::_remove(TreeNode*& node){ //pass by reference to actually mod
         if(!iop) throw std::runtime_error("Despite two children detected, iop is not found, internal structure error");
         //swap iop and the current node by reference, so that the iop is at the position of node and node at position of old iop
         //at this phase, the BST structure is temporarily violated
-        TreeNode*& moved_iop = _swap_nodes(node, iop); 
-        return _remove(moved_iop);
+        TreeNode*& moved_target = _swap_nodes(node, iop); 
+        return _remove(moved_target);
     }
 }
 
