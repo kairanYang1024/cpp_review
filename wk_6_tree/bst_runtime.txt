@@ -1,0 +1,6 @@
+            BST avg(balancing)  BST worst(decay to LList)   sorted array    sorted LList
+find        O(h = logn)             O(h=n)                   O(logn)        O(n)
+insert      O(h = logn) (dep on find) O(h=n)  (dep on find)  O(n) (amortized) O(n)   (find exact position)
+remove      O(h = logn)             O(h=n)                   O(n)           O(n)
+
+remove work: find = O(h), {2-child case: find iop = O(h), swap data = O(1)}, remove node = O(1) --> total O(h)
