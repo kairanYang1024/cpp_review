@@ -34,6 +34,7 @@ int main() {
             cout << "Value returning: " << avl.find(query) << "\n";
         } 
     }
+    
     cout << "\nTesting small number of removals.\n";
     for(int i = 0; i < 10; i++) {
         int query = rand() % TEST_SIZE;

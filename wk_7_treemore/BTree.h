@@ -56,9 +56,6 @@ class BTree {
                 vector<K> keys_;
                 unsigned keycount_; //number of keys that are hosted in this node, equivalent to keys_.size()
 
-                //make a ptr to the parent of this current node (important in the split&promote part of insertion)
-                BTreeNode* parent; 
-
                 //make a vector to access the list of children, in this implementation the children resided on heap
                 //however, in real situation the children may resided in disk, cloud, server, etc.
                 vector<BTreeNode*> children; 
@@ -66,9 +63,11 @@ class BTree {
                 int height_;
 
                 //creating empty vectors when the node is created
-                BTreeNode() : keycount_(0), height_(0), parent(NULL){
+                BTreeNode() : keycount_(0), height_(0) {
                     keys_ = std::vector<K>();
                     children = std::vector<BTreeNode*>();
+                    // keys_.reserve(order()+1); //pre-allocate the elements in thie vector
+                    // children.reserve(order()+2);
                 }
 
                 bool isLeaf() const {
@@ -90,9 +89,11 @@ class BTree {
 
         //find the appropriate node to add the new key into its key list
         //to be consistent, _find_insert WILL send key to leaf node then propagate upward
-        void _find_insert(BTreeNode* node, const K& key);
-        //split the current node, promote extra element to parent, bipartite the right sublist to another node
-        void _split_node(BTreeNode* tobeSplit); 
+        void _find_insert(BTreeNode*& node, const K& key);
+        //split the child at split_child_idx of parent's children node ptr vector
+        //also, promote the middle element of parent->children[split_child_idx] to the parent node
+        //not recursive, this version isolates the "parent creation" and child split (moved to insert())
+        void _split_child(BTreeNode*& parent, unsigned split_child_idx); 
         //populate the newRight node to have content and children ptrs of tobeSplit's right half removing
         void _fill_right(BTreeNode*& tobeSplit, BTreeNode*& newRight);
 
