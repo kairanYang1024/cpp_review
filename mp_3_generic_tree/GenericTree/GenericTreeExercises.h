@@ -95,9 +95,21 @@ static void treeFactory(GenericTree<int>& tree) {
   // Edit the function body only. You should leave the function header alone.
   // Build the contents of tree so that it matches the diagram above
   // when you print it out. The main() function runs that test for you.
+  
+  //eh, this exercise is lame, in my opinion
+  //first, reset the content of the tree
+  tree.clear();
 
-  // ...
-
+  //second, add the nodes of the tree in sequence
+  //without declaring typename we can set auto to be the catchtype of return methods
+  typedef GenericTree<int>::TreeNode TreeNode;
+  TreeNode* root = tree.createRoot(4);
+  TreeNode* eight = root->addChild(8);
+  TreeNode* fifteen = root->addChild(15);
+  TreeNode* sixteen = eight->addChild(16);
+  TreeNode* twentythree = eight->addChild(23);
+  TreeNode* mystery = sixteen->addChild(42);
+  
 }
 
 // treeFactoryTest: This function demonstrates the execution of treeFactory
@@ -324,8 +336,20 @@ std::vector<T> traverseLevels(GenericTree<T>& tree) {
   // Remember that you can add a copy of an item to the back of a std::vector
   // with the .push_back() member function.
 
-  // ...
+  // iteratively means using a queue
+  std::queue<TreeNode*> processor; //traversal processor
+  processor.push(rootNodePtr);
 
+  while(!processor.empty()) {
+    TreeNode* curr = processor.front();
+    processor.pop();
+    if(curr) {
+      results.push_back(curr->data);
+      for(TreeNode*& child : curr->childrenPtrs) {
+        processor.push(child);
+      }
+    }
+  }
   return results;
 }
 
