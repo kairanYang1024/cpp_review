@@ -213,8 +213,10 @@ void PriorityQueue<T>::_buildHeap(unsigned size) {
     //this argument size is ACTUALLY size_-1 after building the heap, it's the size of the source array
     //start from size/2 to 1, the build operation is O(n)
     for(unsigned i = _getParent(size); i > 0; i--) { //do not heapify down the sentinel node
-        //heapifyDown() is called once here since the lower levels are already heapified, if i incresing then 
-        //more than 1 call to each heapifyDown() is executed
+        //heapifyup takes O(n logn) for each node
+        //heapifydown from i=1 (root) to parent(size) could do extra work
+        //heapifydown from parent(size) downto i=1 is the optimized, despite each heapify is O(log n)
+        //the height of each element differs, the larger height, the fewer elements in that layer
         _heapifyDown(i);
     }
 }
