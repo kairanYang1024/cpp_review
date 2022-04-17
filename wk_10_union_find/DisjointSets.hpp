@@ -196,7 +196,7 @@ void DisjointSets<T>::print_sets() {
         std::cout << "{";
         for(int i = 0; i < size_; i++) {
             if(_find_repidx(i) == root) {
-                std::cout << " " << i << " ";
+                std::cout << "(" << i << ":" << rev_indices_[i] << ")";
             }
         }
         std::cout << "} ";
