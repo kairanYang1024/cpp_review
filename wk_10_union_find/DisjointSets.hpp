@@ -99,28 +99,28 @@ void DisjointSets<T>::make_set(const T& elem) { //O(1)
 }
 
 template <typename T>
-void DisjointSets<T>::unionize(const T& k1, const T& k2) {
+bool DisjointSets<T>::unionize(const T& k1, const T& k2) {
     //"de-reference" the keys 
     if(!indices_.count(k1)) {
         std::cerr << "Warning, key " << k1 << " not found in the set\n";
-        return;
+        return false;
     }
     if(!indices_.count(k2)) {
         std::cerr << "Warning, key " << k2 << " not found in the set\n";
-        return;
+        return false;
     }
     int idx1 = indices_.at(k1);
     int idx2 = indices_.at(k2);
-    _unionize(idx1, idx2); //call the core function
+    return _unionize(idx1, idx2); //call the core function
 }
 
 template <typename T>
-void DisjointSets<T>::_unionize(int idx1, int idx2) {
+bool DisjointSets<T>::_unionize(int idx1, int idx2) {
     //if belong to the same set, no-op
     //ensuring set belonging operation is O(log* n) no matter these indices belong to same set or not
     int rootidx1 = _find_repidx(idx1);
     int rootidx2 = _find_repidx(idx2);
-    if(rootidx1 == rootidx2) return;
+    if(rootidx1 == rootidx2) return false;
 
     if(uptree_[rootidx2] < uptree_[rootidx1]) { //if set 2 has size greater than set 1
         uptree_[rootidx2] += uptree_[rootidx1]; //union by size
@@ -130,6 +130,7 @@ void DisjointSets<T>::_unionize(int idx1, int idx2) {
         uptree_[rootidx2] = rootidx1;
     }
     num_sets_--; //one set has been unionized into the other, effectively decrease by 1
+    return true;
 }
 
 

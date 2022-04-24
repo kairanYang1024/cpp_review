@@ -93,7 +93,7 @@ class DisjointSets {
 
         //API
         void make_set(const T& elem);//create a new set based on element
-        void unionize(const T& k1, const T& k2); //union the sets including k1 and k2
+        bool unionize(const T& k1, const T& k2); //union the sets including k1 and k2, flag true if successfully merged
         const T& find(const T& key); //return the representative element of the set key belongs to
 
         //statistics
@@ -105,7 +105,7 @@ class DisjointSets {
         void print_sets(); //formatting the content of the containers in collection of sets format e.g. {{a,b}, {c}, {d,e,f}}
 
     private: //helper methods
-        void _unionize(int idx1, int idx2); //will encode root node values based on the union mode
+        bool _unionize(int idx1, int idx2); //will encode root node values based on the union mode
         int _find_repidx(int keyidx); //this method also do path-compression on its traversed nodes 
 };
 
