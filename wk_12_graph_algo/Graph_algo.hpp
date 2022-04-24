@@ -81,9 +81,23 @@
  * 
  * Single-source shortest path algorithm (SSSP): path of smallest weight given 2 random vertices.
  * 
- * Dijkstra's algorithm:
+ * Dijkstra's algorithm: very similar to Prim's algorithm, however, the weight is summative, comparing
+ * the total cost from the root node to the node v plus the v-w edgeweight to the existing cost to w.
  * 
+ * will label the query from starting node s to every other node in G, so can answer every shortest-path queries
+ * starting with s. e.g. sp(s, a), sp(s, b), ..., sp(s, h); cannot answer sp(b,c) as unexplored by the algo.
  * 
+ * edge case analysis: 
+ * negative weights (< 0), failed if there exists negative weight cycles
+ *  (in which case no shortest path exists), similarly in Floyd-Warshall (APSP with DP). 
+ * if negative weights exist but not forming cycles, will neither pass since Dijkstra assumes edge weight
+ * increase monotonically as expanding outward from source node (Floyd-warshall will handle it properly). 
+ * 
+ * undirected: handled ok, just treat it as bidirectional, properly maintaining label set will handle it.
+ * (we will implement it here.)
+ * 
+ * runtime analysis: O(n log n + m log n), like Prim's algorithm, with Fibonacci heap, reduced to 
+ * O(n log n <heap removal> + m <traverse while finding shortest path>)
  */
 
 /*
@@ -327,15 +341,85 @@ Graph<T,K> primMST(const Graph<T,K>& graph, const T& start_vtx) {
     return MST;
 }
 
-//TODO: last bit of the entire course review
+//the underlying algorithm that annotates the graph to have series of shortest-path from a given vertex
+//runtime: O(m + log n), using std::priorityqueue as fibonacci heap.
 template <typename T, typename K>
-Graph<T,K> dijkstraPath(const Graph<T,K>& graph, const T& start_vtx, const T& end_vtx) {
-    return Graph<T,K>();
+std::unordered_map<T,T> dijkstra(const Graph<T,K> graph, const T& start_vtx) {
+    using Vertex = typename Graph<T,K>::Vertex;
+    using Edge = typename Graph<T,K>::Edge;
+    using std::pair;
+    assert(countComponents(graph) == 1); //if not connected, cannot make a MST out of it.
+    //this version of MST algo is similar to the logic in Dijkstra's algo as well.
+    //however, trying to make it "edge-less" when maintaining, O(n)
+    std::unordered_set<T> labeled;
+    std::unordered_map<T,K> cost; //maps the vertex named T to the temptative cost K from start_vtx to reach
+    std::unordered_map<T,T> prev; //maps the vertex to the vertex that reached to it.
+    for(const Vertex& v : graph.vertices()) {
+        T name = v.getname();
+        cost[name] = 99999999;
+        //stop assigning prev[name] to NULL since NULL is to pointers in C/++, unlike in other languages.
+    }
+    cost[start_vtx] = 0;
+
+    //build MST edges based on vector
+    std::vector<pair<T,K>> costvec(cost.begin(), cost.end());
+    //update prev[] based on cost[]
+    std::priority_queue<pair<T,K>, std::vector<pair<T,K>>, VertexLabelComp> costqueue;
+    costqueue.push(std::make_pair(start_vtx, 0));
+    while(!costqueue.empty()) {
+        const pair<T,K>&  minvpair = costqueue.top();
+        const T v = minvpair.first;
+        const K mincost = minvpair.second;
+        costqueue.pop();
+        labeled.insert(v);
+        for(const T& w : graph.adjacentNodes(v)) {
+            Edge dummy(v, w); //for searching index to achieve O(1) extraction of edge weight
+            const K& distance = graph.edges().find(dummy)->getlabel(); 
+            //for nodes not labeled, update their cost by the edgeweight, not summative.
+            if(labeled.count(w) == 0 && cost[v] + distance < cost[w]) { 
+                prev[w] = v;
+                cost[w] = cost[v] + distance;
+                costqueue.push(std::make_pair(w, cost[w]));
+            }
+        }
+    }
+    return prev;
 }
 
+//query function 1, find the path as a graph object.
+template <typename T, typename K>
+Graph<T,K> dijkstraPath(const Graph<T,K>& graph, const T& start_vtx, const T& end_vtx) {
+    using Edge = typename Graph<T,K>::Edge;
+    using std::pair;
+    std::unordered_map<T,T> prev = dijkstra(graph, start_vtx);
+    Graph<T,K> path; //empty graph here
+    T pathelem = end_vtx;
+    path.insertVertex(pathelem);
+    while(prev.count(pathelem) && pathelem != start_vtx) {
+        Edge dummy(prev[pathelem], pathelem);
+        const K& distance = graph.edges().find(dummy)->getlabel();
+        path.insertVertex(prev[pathelem]);
+        path.insertEdge(prev[pathelem], pathelem, distance);
+        pathelem = prev[pathelem];
+    }
+    return path;
+}
+
+//query function 2, find the minimum cost from start to end
 template <typename T, typename K>
 K dijkstraWeight(const Graph<T,K>& graph, const T& start_vtx, const T& end_vtx) {
-    return K();
+    using Edge = typename Graph<T,K>::Edge;
+    using std::pair;
+    std::unordered_map<T,T> prev = dijkstra(graph, start_vtx);
+    K sum = K();
+    T pathelem = end_vtx;
+    while(prev.count(pathelem) && pathelem != start_vtx) {
+        Edge dummy(prev[pathelem], pathelem);
+        const K& distance = graph.edges().find(dummy)->getlabel(); 
+        sum = sum + distance;
+        pathelem = prev[pathelem];
+    }
+    return sum;
 }
 
 

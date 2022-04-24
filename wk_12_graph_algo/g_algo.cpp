@@ -91,11 +91,11 @@ int main() {
     cout << "=== End BFS test ===\n";
 
     cout << "\n=== Testing MST on a specified graph === \n";
-    vector<char> testlist1;
+    vector<char> testlist;
     for(char c = 'A'; c < 'I'; c++) {
-        testlist1.push_back(c);
+        testlist.push_back(c);
     }
-    Graph<char, int> mtgra(testlist1);
+    Graph<char, int> mtgra(testlist);
     buildedge_tcase2(mtgra);
     cout << "Kruskal algorithm should make a minimum-spanning tree out of a given (undirected) graph.\n";
     Graph<char, int> mttree = kruskalMST(mtgra);
@@ -123,7 +123,13 @@ int main() {
     cout << "=== End MST test ===\n";
 
     cout << "\n=== Testing single-source shortest path algorithm on a specific graph === \n";
-
+    for(char c = 'A'; c < 'I'; c++) {
+        cout << "querying shortest path from " << c << " to A\n";
+        Graph<char, int> shortestpath = dijkstraPath(mtgra, 'A', c);
+        shortestpath.print_edgelist();
+        cout << "path weight: " << dijkstraWeight(mtgra, 'A', c) << " and is equal to " 
+        << shortestpath.sumEdgeWeights() << "\n";
+    }
     cout << "=== End Dijkstra test ===\n";
     cout << "\nGrand Success!\n";
     return 0;
